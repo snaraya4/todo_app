@@ -1,38 +1,49 @@
 package com.example.todo_app;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<Task> taskList = new ArrayList<>();
+
+    private List<Task> taskList;
     private TaskAdapter taskAdapter;
+    private RecyclerView recyclerView;
+    private EditText editText;
+    private Button addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerViewTasks = findViewById(R.id.recyclerViewTasks);
-        FloatingActionButton fabAddTask = findViewById(R.id.fabAddTask);
+        taskList = new ArrayList<>();
+        recyclerView = findViewById(R.id.recyclerView);
+        editText = findViewById(R.id.editText);
+        addButton = findViewById(R.id.addButton);
 
         taskAdapter = new TaskAdapter(taskList);
-        recyclerViewTasks.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewTasks.setAdapter(taskAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(taskAdapter);
 
-        // Handle FloatingActionButton click to add new task
-        fabAddTask.setOnClickListener(view -> {
-            // Create a new task and add it to the list
-            Task newTask = new Task(taskList.size() + 1, "New Task", "Description");
-            taskList.add(newTask);
-
-            // Notify the adapter that the data set has changed
-            taskAdapter.notifyDataSetChanged();
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskName = editText.getText().toString().trim();
+                if (!taskName.isEmpty()) {
+                    taskList.add(new Task(taskName));
+                    taskAdapter.notifyDataSetChanged();
+                    editText.setText("");
+                }
+            }
         });
     }
 }
-
